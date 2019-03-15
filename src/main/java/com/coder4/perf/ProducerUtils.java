@@ -14,6 +14,9 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 /**
  * @author coder4
@@ -29,32 +32,15 @@ public class ProducerUtils {
     }
 
     public static void sync(String ns, String topic, String tag, int count, int msgLen) throws MQClientException {
-        //Instantiate with a producer group name.
-        DefaultMQProducer producer = new
-                DefaultMQProducer(GROUP);
-        // Specify name server addresses.
-        producer.setNamesrvAddr(ns);
-        //Launch the instance.
-        producer.start();
-        for (int i = 0; i < count; i++) {
-            try {
-                //Create a message instance, specifying topic, tag and message body.
-                Message msg = null;
-
-                msg = generateMsg(topic, tag, msgLen);
-
-                //Call send message to deliver message to one of brokers.
-                SendResult sendResult = producer.send(msg);
-            } catch (Exception e) {
-                System.out.println("ERROR: " + e);
-            }
-        }
-        //Shut down once the producer instance is not longer in use.
-        producer.shutdown();
-
+        send(ns, topic, tag, count, msgLen, false);
     }
 
     public static void async(String ns, String topic, String tag, int count, int msgLen) throws MQClientException {
+        send(ns, topic, tag, count, msgLen, true);
+    }
+
+    public static void send(String ns, String topic, String tag, int count, int msgLen,
+                            boolean async) throws MQClientException {
         //Instantiate with a producer group name.
         DefaultMQProducer producer = new
                 DefaultMQProducer(GROUP);
@@ -63,30 +49,46 @@ public class ProducerUtils {
         //Launch the instance.
         producer.start();
         producer.setRetryTimesWhenSendAsyncFailed(0);
+        long start = System.currentTimeMillis();
+        AtomicInteger asyncSuccCnt = new AtomicInteger(0);
+        AtomicInteger asyncFailCnt = new AtomicInteger(0);
         for (int i = 0; i < count; i++) {
             try {
                 //Create a message instance, specifying topic, tag and message body.
-                Message msg = null;
+                Message msg = generateMsg(topic, tag, msgLen);
 
-                msg = generateMsg(topic, tag, msgLen);
+                if (async) {
+                    producer.send(msg, new SendCallback() {
+                        @Override
+                        public void onSuccess(SendResult sendResult) {
+                            asyncSuccCnt.incrementAndGet();
+                        }
 
-                //Call send message to deliver message to one of brokers.
-                producer.send(msg, new SendCallback() {
-                    @Override
-                    public void onSuccess(SendResult sendResult) {
+                        @Override
+                        public void onException(Throwable e) {
+                            asyncFailCnt.incrementAndGet();
+                        }
+                    });
+                } else {
+                    producer.send(msg);
+                }
 
-                    }
-
-                    @Override
-                    public void onException(Throwable e) {
-                        System.out.println("ERROR: " + e);
-                    }
-                });
             } catch (Exception e) {
 
             }
         }
+        long end = System.currentTimeMillis();
+        System.out.format("TPS=%.2f\n", (double) count * 1000 / (double) (end - start));
         //Shut down once the producer instance is not longer in use.
+        if (async) {
+            try {
+                // 等待都发完
+                Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                System.out.format("succ=%d fail=%d\n", asyncSuccCnt.intValue(), asyncFailCnt.intValue());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         producer.shutdown();
 
     }

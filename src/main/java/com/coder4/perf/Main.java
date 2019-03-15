@@ -20,27 +20,14 @@ public class Main {
 
         try {
 
-            System.out.println("Sync Test 1w * 10, len=100");
+            System.out.println("Async Test 1w * 10, len=100");
             int cnt = 10000;
             int msgLen = 100;
             int n = 10;
             for (int i = 0; i < n; i++) {
-                long start = System.currentTimeMillis();
-                ProducerUtils.sync(ns, topic, tag, cnt, msgLen);
-                long end = System.currentTimeMillis();
-                System.out.format("TPS: %.2f\n", (double) cnt * 1000 / (double) (end - start));
+                ProducerUtils.async(ns, topic, tag, cnt, msgLen);
             }
 
-//            System.out.println("Async Test 10 * 10, len=100");
-//            cnt = 1000;
-//            msgLen = 100;
-//            n = 10;
-//            for (int i = 0; i < n; i++) {
-//                long start = System.currentTimeMillis();
-//                ProducerUtils.async(ns, topic, tag, cnt, msgLen);
-//                long end = System.currentTimeMillis();
-//                System.out.format("TPS: %.2f\n", (double) cnt * 1000 / (double) (end - start));
-//            }
 
 
         } catch (MQClientException e) {
