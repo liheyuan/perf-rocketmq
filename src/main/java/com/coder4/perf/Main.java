@@ -18,17 +18,43 @@ public class Main {
         String topic = "topic1";
         String tag = "tag1";
 
+        int cnt = 100000;
+
         try {
 
-            System.out.println("Async Test 1w * 10, len=100");
-            int cnt = 10000;
-            int msgLen = 100;
-            int n = 10;
-            for (int i = 0; i < n; i++) {
-                ProducerUtils.async(ns, topic, tag, cnt, msgLen);
+//            for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
+//                int msgLen = 50;
+//                int topicCnt = 1;
+//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+//                        msgLen, topicCnt, threadCnt);
+//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
+//            }
+//
+//            System.out.println();
+//
+//            for (int msgLen = 1; msgLen < 2000; msgLen += 100) {
+//                int threadCnt = 4;
+//                int topicCnt = 1;
+//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+//                        msgLen, topicCnt, threadCnt);
+//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
+//            }
+
+            System.out.println();
+            for (int topicCnt = 1; topicCnt < 20; topicCnt++) {
+                int threadCnt = 4;
+                int msgLen = 100;
+                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threadCnt);
+                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
             }
 
-
+//            System.out.println("Async Test 1w * 10, len=100");
+//            cnt = 10000;
+//            msgLen = 100;
+//            for (int i = 0; i < n; i++) {
+//                ProducerUtils.async(ns, topic, tag, cnt, msgLen);
+//            }
 
         } catch (MQClientException e) {
             e.printStackTrace();

@@ -17,11 +17,12 @@ docker run \
     --name $NAME \
     --volume "$VOLUME_LOGS":/root/logs \
     --volume "$VOLUME_STORE":/root/store \
+    --env MAX_POSSIBLE_HEAP=4294967296 \
     --env PUID=$PUID \
     --env PGID=$PGID \
     -p 9876:9876 \
     --network nw \
     --detach \
     --restart always \
-    rocketmqinc/rocketmq:4.2.0 sh mqnamesrv
+    coder4/rocketmq:4.2.0 sh mqnamesrv
 

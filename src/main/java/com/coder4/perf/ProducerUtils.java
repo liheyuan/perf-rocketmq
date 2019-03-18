@@ -14,9 +14,10 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
 
 /**
  * @author coder4
@@ -31,16 +32,20 @@ public class ProducerUtils {
                 String.format("%1$" + msgLen + "s", "a").getBytes(RemotingHelper.DEFAULT_CHARSET));
     }
 
-    public static void sync(String ns, String topic, String tag, int count, int msgLen) throws MQClientException {
-        send(ns, topic, tag, count, msgLen, false);
+    public static void sync(String ns, String tag, int count, int msgLen,
+                            int topicCnt, int threadCnt) throws MQClientException {
+        send(ns, tag, count, msgLen, topicCnt, threadCnt, false);
     }
 
-    public static void async(String ns, String topic, String tag, int count, int msgLen) throws MQClientException {
-        send(ns, topic, tag, count, msgLen, true);
+    public static void async(String ns, String tag, int count, int msgLen,
+                             int topicCnt, int threadCnt) throws MQClientException {
+        send(ns, tag, count, msgLen, topicCnt, threadCnt, true);
     }
 
-    public static void send(String ns, String topic, String tag, int count, int msgLen,
-                            boolean async) throws MQClientException {
+    public static void send(String ns, String tag, int count, int msgLen,
+                            int topicCnt, int threadCnt, boolean async) throws MQClientException {
+        // Thread Pool
+        ExecutorService executor = Executors.newFixedThreadPool(threadCnt);
         //Instantiate with a producer group name.
         DefaultMQProducer producer = new
                 DefaultMQProducer(GROUP);
@@ -53,30 +58,38 @@ public class ProducerUtils {
         AtomicInteger asyncSuccCnt = new AtomicInteger(0);
         AtomicInteger asyncFailCnt = new AtomicInteger(0);
         for (int i = 0; i < count; i++) {
+
             try {
                 //Create a message instance, specifying topic, tag and message body.
+                String topic = genTopic(i, topicCnt);
                 Message msg = generateMsg(topic, tag, msgLen);
 
-                if (async) {
-                    producer.send(msg, new SendCallback() {
-                        @Override
-                        public void onSuccess(SendResult sendResult) {
-                            asyncSuccCnt.incrementAndGet();
-                        }
+                executor.submit(() -> {
+                    try {
+                        if (async) {
+                            producer.send(msg, new SendCallback() {
+                                @Override
+                                public void onSuccess(SendResult sendResult) {
+                                    asyncSuccCnt.incrementAndGet();
+                                }
 
-                        @Override
-                        public void onException(Throwable e) {
-                            asyncFailCnt.incrementAndGet();
+                                @Override
+                                public void onException(Throwable e) {
+                                    asyncFailCnt.incrementAndGet();
+                                }
+                            });
+                        } else {
+                            producer.send(msg);
                         }
-                    });
-                } else {
-                    producer.send(msg);
-                }
+                    } catch (Exception e) {
 
+                    }
+                });
             } catch (Exception e) {
 
             }
         }
+        executor.shutdown();
         long end = System.currentTimeMillis();
         System.out.format("TPS=%.2f\n", (double) count * 1000 / (double) (end - start));
         //Shut down once the producer instance is not longer in use.
@@ -91,6 +104,10 @@ public class ProducerUtils {
         }
         producer.shutdown();
 
+    }
+
+    private static String genTopic(int i, int topicCnt) {
+        return String.format("topic%d", i % topicCnt);
     }
 
 }

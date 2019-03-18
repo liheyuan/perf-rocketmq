@@ -17,6 +17,7 @@ docker run \
     --name $NAME \
     --volume "$VOLUME_LOGS":/root/logs \
     --volume "$VOLUME_STORE":/root/store \
+    --env MAX_POSSIBLE_HEAP=8589934592 \
     --env PUID=$PUID \
     --env PGID=$PGID \
     --env NAMESRV_ADDR="rocketmq-ns:9876" \
