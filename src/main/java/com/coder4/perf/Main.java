@@ -22,23 +22,29 @@ public class Main {
 
         try {
 
-//            for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
-//                int msgLen = 50;
-//                int topicCnt = 1;
-//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
-//                        msgLen, topicCnt, threadCnt);
-//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
-//            }
-//
-//            System.out.println();
-//
-//            for (int msgLen = 1; msgLen < 2000; msgLen += 100) {
-//                int threadCnt = 4;
-//                int topicCnt = 1;
-//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
-//                        msgLen, topicCnt, threadCnt);
-//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
-//            }
+            for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
+                int msgLen = 50;
+                int topicCnt = 1;
+                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threadCnt);
+                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
+            }
+
+            System.out.println();
+
+            for (int msgLen = 1; msgLen <= 10000; ) {
+                int threadCnt = 4;
+                int topicCnt = 1;
+                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threadCnt);
+                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
+
+                if (msgLen < 1000) {
+                    msgLen *= 10;
+                } else {
+                    msgLen += 1000;
+                }
+            }
 
             System.out.println();
             for (int topicCnt = 1; topicCnt < 20; topicCnt++) {

@@ -82,14 +82,23 @@ public class ProducerUtils {
                             producer.send(msg);
                         }
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 });
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
-        executor.shutdown();
+        try {
+            executor.shutdown();
+            while (true) {
+                if (executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+                    break;
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         long end = System.currentTimeMillis();
         System.out.format("TPS=%.2f\n", (double) count * 1000 / (double) (end - start));
         //Shut down once the producer instance is not longer in use.
