@@ -23,7 +23,7 @@ public class Main {
         try {
 
             for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
-                int msgLen = 50;
+                int msgLen = 100;
                 int topicCnt = 1;
                 System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
                         msgLen, topicCnt, threadCnt);

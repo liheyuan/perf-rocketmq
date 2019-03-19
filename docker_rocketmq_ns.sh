@@ -24,5 +24,5 @@ docker run \
     --network nw \
     --detach \
     --restart always \
-    rocketmq:4.3.2 sh mqnamesrv
+    coder4/rocketmq:4.3.2 sh mqnamesrv
 
