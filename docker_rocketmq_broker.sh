@@ -26,5 +26,5 @@ docker run \
     --network nw \
     --detach \
     --restart always \
-    rocketmq:latest sh mqbroker 
+    rocketmq:4.3.2 sh mqbroker 
 
