@@ -105,7 +105,7 @@ public class ProducerUtils {
         if (async) {
             try {
                 // 等待都发完
-                Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                Thread.sleep(TimeUnit.SECONDS.toMillis(10 *  count / 10000));
                 System.out.format("succ=%d fail=%d\n", asyncSuccCnt.intValue(), asyncFailCnt.intValue());
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -116,6 +116,9 @@ public class ProducerUtils {
     }
 
     private static String genTopic(int i, int topicCnt) {
+        if (topicCnt <= 1) {
+            return "topic0";
+        }
         return String.format("topic%d", i % topicCnt);
     }
 
