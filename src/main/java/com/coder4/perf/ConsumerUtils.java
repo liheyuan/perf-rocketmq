@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * @author coder4
  */
-public class Main {
+public class ConsumerUtils {
 
     private static final String GROUP = "GROUP_TEST_CONSUMER";
 

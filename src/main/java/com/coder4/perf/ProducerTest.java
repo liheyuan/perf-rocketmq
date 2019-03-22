@@ -95,7 +95,7 @@ public class ProducerTest {
         int threads = 16;
         while (true) {
             System.out.format("Consume threadCnt=%d, ", threads);
-            Main.consume(ns, threads);
+            ConsumerUtils.consume(ns, threads);
         }
     }
 
