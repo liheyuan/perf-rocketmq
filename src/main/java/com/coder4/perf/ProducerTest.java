@@ -14,55 +14,88 @@ import org.apache.rocketmq.client.exception.MQClientException;
 public class ProducerTest {
 
     public static void main(String[] args) {
-        String ns = "localhost:9876";
-        String tag = "tag1";
 
-        int cnt = 100000;
+        if (args.length != 2) {
+            System.out.println("Usage: ProducerTest <ns xxx:9867> <mode test/many/consumer>");
+            return;
+        }
 
+        String ns = args[0];
+        String mode = args[1];
+
+        if (mode.equals("test")) {
+            sendTest(ns);
+        } else if (mode.equals("many")) {
+            sendMany(ns);
+        } else if (mode.equals("consumer")) {
+            consume(ns);
+        } else {
+            System.out.println("invalid mode = " + mode);
+        }
+
+
+    }
+
+    private static void sendTest(String ns) {
         try {
 
-//            for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
-//                int msgLen = 100;
-//                int topicCnt = 1;
-//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
-//                        msgLen, topicCnt, threadCnt);
-//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
-//            }
-//
-//            System.out.println();
-//
-//            for (int msgLen = 1; msgLen <= 10000; ) {
-//                int threadCnt = 4;
-//                int topicCnt = 1;
-//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
-//                        msgLen, topicCnt, threadCnt);
-//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
-//
-//                if (msgLen < 1000) {
-//                    msgLen *= 10;
-//                } else {
-//                    msgLen += 1000;
-//                }
-//            }
-//
-//            System.out.println();
-//            for (int topicCnt = 1; topicCnt < 20; topicCnt++) {
-//                int threadCnt = 4;
-//                int msgLen = 100;
-//                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
-//                        msgLen, topicCnt, threadCnt);
-//                ProducerUtils.sync(ns, tag, cnt, msgLen, topicCnt, threadCnt);
-//            }
+            int cnt = 100000;
 
-            System.out.println("Async Test 1w * 10, len=100");
-            cnt = 1000000;
-            int msgLen = 100;
-            for (int i = 0; i < 20; i++) {
-                ProducerUtils.async(ns, tag, cnt, msgLen, 1, 8);
+            for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
+                int msgLen = 100;
+                int topicCnt = 1;
+                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threadCnt);
+                ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
+            }
+
+            System.out.println();
+
+            for (int msgLen = 1; msgLen <= 10000; ) {
+                int threadCnt = 4;
+                int topicCnt = 1;
+                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threadCnt);
+                ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
+
+                if (msgLen < 1000) {
+                    msgLen *= 10;
+                } else {
+                    msgLen += 1000;
+                }
+            }
+
+            System.out.println();
+            for (int topicCnt = 1; topicCnt < 20; topicCnt++) {
+                int threadCnt = 4;
+                int msgLen = 100;
+                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threadCnt);
+                ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
             }
 
         } catch (MQClientException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void sendMany(String ns) {
+        int cnt = 10000000;
+        int msgLen = 100;
+        try {
+            for (int i = 0; i < 200; i++) {
+                ProducerUtils.sync(ns, cnt, msgLen, 1, 8);
+            }
+        } catch (MQClientException e) {
+
+        }
+    }
+
+    private static void consume(String ns) {
+        int threads = 16;
+        while (true) {
+            System.out.format("Consume threadCnt=%d, ", threads);
+            Main.consume(ns, threads);
         }
     }
 

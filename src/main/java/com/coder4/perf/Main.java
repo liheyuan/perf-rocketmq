@@ -1,18 +1,14 @@
 /**
- * @(#)ConsumerUtils.java, Mar 21, 2019.
+ * @(#)ConsumerUtils.java, Mar 22, 2019.
  * <p>
  * Copyright 2019 fenbi.com. All rights reserved.
  * FENBI.COM PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package com.coder4.perf;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.common.utils.ThreadUtils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,13 +16,14 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * @author coder4
  */
-public class ConsumerUtils {
+public class Main {
 
     private static final String GROUP = "GROUP_TEST_CONSUMER";
 
     private static final String TOPIC = "topic0";
 
     public static void consume(String ns, int threads) {
+
         // Instantiate with specified consumer group name.
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(GROUP);
 
@@ -71,4 +68,5 @@ public class ConsumerUtils {
             e.printStackTrace();
         }
     }
+
 }

@@ -26,23 +26,25 @@ public class ProducerUtils {
 
     private static final String GROUP = "GROUP_TEST";
 
+    private static final String TAG = "tag1";
+
     private static Message generateMsg(String topic, String tag, int msgLen)
             throws UnsupportedEncodingException {
         return new Message(topic, tag,
                 String.format("%1$" + msgLen + "s", "a").getBytes(RemotingHelper.DEFAULT_CHARSET));
     }
 
-    public static void sync(String ns, String tag, int count, int msgLen,
+    public static void sync(String ns, int count, int msgLen,
                             int topicCnt, int threadCnt) throws MQClientException {
-        send(ns, tag, count, msgLen, topicCnt, threadCnt, false);
+        send(ns, count, msgLen, topicCnt, threadCnt, false);
     }
 
-    public static void async(String ns, String tag, int count, int msgLen,
+    public static void async(String ns, int count, int msgLen,
                              int topicCnt, int threadCnt) throws MQClientException {
-        send(ns, tag, count, msgLen, topicCnt, threadCnt, true);
+        send(ns, count, msgLen, topicCnt, threadCnt, true);
     }
 
-    public static void send(String ns, String tag, int count, int msgLen,
+    public static void send(String ns, int count, int msgLen,
                             int topicCnt, int threadCnt, boolean async) throws MQClientException {
         // Thread Pool
         ExecutorService executor = Executors.newFixedThreadPool(threadCnt);
@@ -62,7 +64,7 @@ public class ProducerUtils {
             try {
                 //Create a message instance, specifying topic, tag and message body.
                 String topic = genTopic(i, topicCnt);
-                Message msg = generateMsg(topic, tag, msgLen);
+                Message msg = generateMsg(topic, TAG, msgLen);
 
                 executor.submit(() -> {
                     try {
