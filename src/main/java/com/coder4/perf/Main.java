@@ -11,12 +11,12 @@ import org.apache.rocketmq.client.exception.MQClientException;
 /**
  * @author coder4
  */
-public class ProducerTest {
+public class Main {
 
     public static void main(String[] args) {
 
         if (args.length != 2) {
-            System.out.println("Usage: ProducerTest <ns xxx:9867> <mode test/many/consumer>");
+            System.out.println("Usage: Main <ns xxx:9867> <mode test/many/consumer>");
             return;
         }
 

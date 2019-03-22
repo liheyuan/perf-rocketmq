@@ -55,7 +55,6 @@ public class ConsumerUtils {
 
             //Launch the consumer instance.
             long tsStart = System.currentTimeMillis();
-            System.out.printf("Consumer Started.%n");
             consumer.start();
 
             Thread.sleep(1000 * 10);
