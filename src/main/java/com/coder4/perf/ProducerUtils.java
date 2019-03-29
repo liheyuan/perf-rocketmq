@@ -94,7 +94,7 @@ public class ProducerUtils {
         try {
             executor.shutdown();
             while (true) {
-                if (executor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+                if (executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
                     break;
                 }
             }

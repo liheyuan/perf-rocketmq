@@ -52,7 +52,7 @@ public class Main {
             System.out.println();
 
             for (int msgLen = 1; msgLen <= 10000; ) {
-                int threadCnt = 8;
+                int threadCnt = 16;
                 System.out.format("Sync Send Test 100k, len=%d, topicCnt=%d, threadCnt=%d, ",
                         msgLen, topicCnt, threadCnt);
                 ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
@@ -68,7 +68,7 @@ public class Main {
             for (topicCnt = 1; topicCnt <= 500; topicCnt += 50) {
                 int threadCnt = 8;
                 int msgLen = 100;
-                System.out.format("Sync Send Test 1k, len=%d, topicCnt=%d, threadCnt=%d, ",
+                System.out.format("Sync Send Test 100k, len=%d, topicCnt=%d, threadCnt=%d, ",
                         msgLen, topicCnt, threadCnt);
                 ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
 
@@ -76,6 +76,17 @@ public class Main {
                     topicCnt = 0;
                 }
             }
+
+            System.out.println();
+//            topicCnt = 30;
+//            cnt = 500000;
+//            for (int i = 0; i< 10 ;i++) {
+//                int threadCnt = 8;
+//                int msgLen = 100;
+//                System.out.format("Async Send Test 500k, len=%d, topicCnt=%d, threadCnt=%d, ",
+//                        msgLen, topicCnt, threadCnt);
+//                ProducerUtils.async(ns, cnt, msgLen, topicCnt, threadCnt);
+//            }
 
         } catch (MQClientException e) {
             e.printStackTrace();
