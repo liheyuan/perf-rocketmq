@@ -1,11 +1,13 @@
 #!/bin/bash
 
-if [ x"$#" != x"1" ];then
-    echo "Usage: $0 BROKER_MM_NAME"
+if [ x"$#" != x"3" ];then
+    echo "Usage: $0 NAMESRV_IP BROKER_MM_NAME BROKER_MM_IP"
     exit -1
 fi
 
-BROKER_MM_NAME="$1"
+NAMESRV_IP="$1"
+BROKER_MM_NAME="$2"
+BROKER_MM_IP="$3"
 NAME="rocketmq-$BROKER_MM_NAME"
 PUID="1000"
 PGID="1000"
@@ -23,9 +25,10 @@ docker run \
     --volume "$VOLUME_LOGS":/root/logs \
     --volume "$VOLUME_STORE":/root/store \
     --env MM_BROKER_ID=$BROKER_MM_NAME \
+    --env MM_BROKER_IP=$BROKER_MM_IP \
     --env PUID=$PUID \
     --env PGID=$PGID \
-    --env NAMESRV_ADDR="192.168.6.85:9876" \
+    --env NAMESRV_ADDR="$NAMESRV_IP:9876" \
     -p 10911:10911 \
     -p 10909:10909 \
     --network host \
