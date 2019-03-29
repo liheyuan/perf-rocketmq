@@ -41,10 +41,10 @@ public class Main {
 
             int cnt = 100000;
 
-            for (int threadCnt = 1; threadCnt < 16; threadCnt++) {
+            for (int threadCnt = 1; threadCnt <= 16; threadCnt++) {
                 int msgLen = 100;
                 int topicCnt = 1;
-                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                System.out.format("Sync Send Test 100k, len=%d, topicCnt=%d, threadCnt=%d, ",
                         msgLen, topicCnt, threadCnt);
                 ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
             }
@@ -52,9 +52,9 @@ public class Main {
             System.out.println();
 
             for (int msgLen = 1; msgLen <= 10000; ) {
-                int threadCnt = 4;
+                int threadCnt = 8;
                 int topicCnt = 1;
-                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                System.out.format("Sync Send Test 100k, len=%d, topicCnt=%d, threadCnt=%d, ",
                         msgLen, topicCnt, threadCnt);
                 ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
 
@@ -66,13 +66,17 @@ public class Main {
             }
 
             System.out.println();
-            for (int topicCnt = 1; topicCnt < 20; topicCnt++) {
-                int threadCnt = 4;
-                int msgLen = 100;
-                System.out.format("Sync Send Test 10w, len=%d, topicCnt=%d, threadCnt=%d, ",
-                        msgLen, topicCnt, threadCnt);
-                ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
-            }
+//            for (int topicCnt = 1; topicCnt < 500; topicCnt += 50) {
+//                int threadCnt = 8;
+//                int msgLen = 100;
+//                System.out.format("Sync Send Test 1k, len=%d, topicCnt=%d, threadCnt=%d, ",
+//                        msgLen, topicCnt, threadCnt);
+//                ProducerUtils.sync(ns, cnt, msgLen, topicCnt, threadCnt);
+//
+//                if (topicCnt == 1) {
+//                    topicCnt = 0;
+//                }
+//            }
 
         } catch (MQClientException e) {
             e.printStackTrace();
@@ -80,14 +84,18 @@ public class Main {
     }
 
     private static void sendMany(String ns) {
-        int cnt = 10000000;
+        int cnt = 1000000;
         int msgLen = 100;
+        int topicCnt = 1;
+        int threads = 8;
         try {
             for (int i = 0; i < 200; i++) {
+                System.out.format("Sync Send Test 100w, len=%d, topicCnt=%d, threadCnt=%d, ",
+                        msgLen, topicCnt, threads);
                 ProducerUtils.sync(ns, cnt, msgLen, 1, 8);
             }
         } catch (MQClientException e) {
-
+            e.printStackTrace();
         }
     }
 
